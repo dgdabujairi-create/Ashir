@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocity Command Center — Complete Finance & Work Hub</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-alt: #263348;
+            --border: #334155;
+            --border-light: #1e293b;
+            --text: #e2e8f0;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #312e81;
+            --success: #10b981;
+            --success-bg: #064e3b;
+            --warning: #f59e0b;
+            --warning-bg: #78350f;
+            --danger: #ef4444;
+            --danger-bg: #7f1d1d;
+            --info: #3b82f6;
+            --info-bg: #1e3a5f;
+            --sidebar-w: 240px;
+            --header-h: 56px;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: #0b1120;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: transform var(--transition);
+        }
+        .sidebar-logo {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.01em;
+            color: #fff;
+        }
+        .sidebar-logo .icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 0;
+        }
+        .sidebar-nav .nav-section {
+            padding: 8px 16px 4px;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .sidebar-nav button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: calc(100% - 16px);
+            margin: 2px 8px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: left;
+            font-family: var(--font);
+            white-space: nowrap;
+        }
+        .sidebar-nav button:hover {
+            background: #1e293b;
+            color: #fff;
+        }
+        .sidebar-nav button.active {
+            background: var(--primary-light);
+            color: #c7d2fe;
+            font-weight: 600;
+        }
+        .sidebar-nav button .nav-icon {
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .topbar {
+            height: var(--header-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+            flex-shrink: 0;
+            z-index: 50;
+        }
+        .topbar .page-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+        }
+        .topbar .topbar-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .topbar .connection-status {
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .status-connected {
+            background: var(--success-bg);
+            color: #34d399;
+        }
+        .status-disconnected {
+            background: var(--danger-bg);
+            color: #f87171;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: none;
+        }
+        .content-area.active {
+            display: block;
+        }
+        .content-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .content-area::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        /* Cards & Grids */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+        .card-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            letter-spacing: -0.01em;
+        }
+        .card-body {
+            padding: 16px 18px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: default;
+        }
+        .stat-card:hover {
+            border-color: #6366f1;
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+        .stat-card .stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-top: 2px;
+        }
+        .stat-card.accent-purple {
+            border-left: 3px solid #6366f1;
+        }
+        .stat-card.accent-green {
+            border-left: 3px solid #10b981;
+        }
+        .stat-card.accent-amber {
+            border-left: 3px solid #f59e0b;
+        }
+        .stat-card.accent-red {
+            border-left: 3px solid #ef4444;
+        }
+        .stat-card.accent-blue {
+            border-left: 3px solid #3b82f6;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-family: var(--font);
+            letter-spacing: 0.01em;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        .btn-success:hover {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: #6366f1;
+            color: #c7d2fe;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.73rem;
+        }
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            max-height: 55vh;
+            overflow-y: auto;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .table-wrap::-webkit-scrollbar {
+            height: 5px;
+            width: 5px;
+        }
+        .table-wrap::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 900px;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        thead th {
+            background: #1a2332;
+            color: var(--text-secondary);
+            font-weight: 700;
+            padding: 10px 8px;
+            border-bottom: 2px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        tbody td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        tbody tr:hover {
+            background: #1a2332;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .badge-pending {
+            background: var(--warning-bg);
+            color: #fbbf24;
+        }
+        .badge-completed {
+            background: var(--success-bg);
+            color: #34d399;
+        }
+        .badge-loan-taken {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        .badge-loan-given {
+            background: #064e3b;
+            color: #6ee7b7;
+        }
+        .badge-receivable {
+            background: #78350f;
+            color: #fcd34d;
+        }
+        .amount-cell {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 5;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: var(--surface);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #0f172a;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            transition: var(--transition);
+            resize: vertical;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+        .form-group textarea {
+            min-height: 60px;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.82rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideInToast 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        @keyframes slideInToast {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="icon">⚡</span> Velocity Hub
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">Main</div>
+            <button data-view="dashboard" class="active"><span class="nav-icon">📊</span> Dashboard</button>
+            <button data-view="employees"><span class="nav-icon">👥</span> Employees</button>
+            <div class="nav-section">Finance</div>
+            <button data-view="loans"><span class="nav-icon">💰</span> Loan Tracker</button>
+            <button data-view="monthly-receivables"><span class="nav-icon">📅</span> Monthly Receivables</button>
+            <button data-view="one-time-loans"><span class="nav-icon">🏦</span> One-Time Loans</button>
+            <button data-view="projects"><span class="nav-icon">📋</span> Project Finance</button>
+            <div class="nav-section">Work</div>
+            <button data-view="work-daily"><span class="nav-icon">📝</span> Daily Work Log</button>
+            <button data-view="work-session"><span class="nav-icon">⚙️</span> Session Manager</button>
+            <div class="nav-section">Reports</div>
+            <button data-view="reports"><span class="nav-icon">📈</span> Reports & Export</button>
+        </nav>
+        <div class="sidebar-footer">Velocity Hub v1.0 · PKR</div>
+    </aside>
+
+    <!-- ═══════════ MAIN ═══════════ -->
+    <main class="main" id="mainContent">
+        <div class="topbar">
+            <span class="page-title" id="pageTitle">📊 Dashboard</span>
+            <div class="topbar-actions">
+                <span class="connection-status status-disconnected" id="connectionStatus" title="MongoDB Connection">● Offline Mode</span>
+                <button class="btn btn-outline btn-sm" onclick="refreshAllData()" title="Refresh All Data">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="content-area active" id="view-dashboard">
+            <div class="summary-grid" id="dashboardSummary"></div>
+            <div class="card">
+                <div class="card-header">📋 Recent Activity</div>
+                <div class="card-body" id="recentActivity">
+                    <p class="text-muted">Loading recent activity...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees -->
+        <div class="content-area" id="view-employees">
+            <div class="card">
+                <div class="card-header">
+                    <span>👥 Employee Directory</span>
+                    <button class="btn btn-primary btn-sm" onclick="openEmployeeModal()">➕ Add Employee</button>
+                </div>
+                <div class="table-wrap"><table><thead><tr>
+                    <th>#</th><th>Name</th><th>Designation</th><th>Phone</th><th>Email</th><th>Join Date</th><th>Status</th><th>Actions</th>
+                </tr></thead><tbody id="employeesTableBody"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- Loans -->
+        <div class="content-area" id="view-loans">
+            <div class="summary-grid" id="loansSummaryCards"></div>
+            <div class="card">
+                <div class="card-header">
+                    <span>💰 All Transactions</span>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <input type="text" id="loanSearch" placeholder="Search..." oninput="renderLoans()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;width:160px;">
+                        <select id="loanTypeFilter" onchange="renderLoans()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;">
+                            <option value="All">All Types</option><option value="Loan Taken">Loan Taken</option><option value="Loan Given">Loan Given</option><option value="Receivable">Receivable</option>
+                        </select>
+                        <select id="loanStatusFilter" onchange="renderLoans()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;">
+                            <option value="All">All Status</option><option value="Pending">Pending</option><option value="Completed">Completed</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="openLoanModal()">➕ Add</button>
+                        <button class="btn btn-outline btn-sm" onclick="exportLoansCSV()">📥 Export</button>
+                    </div>
+                </div>
+                <div class="table-wrap"><table><thead><tr>
+                    <th>#</th><th>Name</th><th>Date</th><th>Type</th><th>Category</th><th>Details</th><th>Amount (PKR)</th><th>Status</th><th>Remarks</th><th>Actions</th>
+                </tr></thead><tbody id="loansTableBody"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- Monthly Receivables -->
+        <div class="content-area" id="view-monthly-receivables">
+            <div class="card">
+                <div class="card-header">
+                    <span>📅 Monthly Receivables Tracker</span>
+                    <button class="btn btn-primary btn-sm" onclick="addReceivableRow()">➕ Add Person</button>
+                </div>
+                <div class="table-wrap"><table><thead id="receivablesHead"></thead><tbody id="receivablesBody"></tbody><tfoot id="receivablesFoot"></tfoot></table></div>
+            </div>
+        </div>
+
+        <!-- One-Time Loans -->
+        <div class="content-area" id="view-one-time-loans">
+            <div class="summary-grid" id="otlSummaryCards"></div>
+            <div class="card">
+                <div class="card-header">
+                    <span>🏦 One-Time Loans</span>
+                    <div style="display:flex;gap:8px;">
+                        <select id="otlFilter" onchange="renderOneTimeLoans()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;">
+                            <option value="all">All</option><option value="pending">Pending</option><option value="paid">Paid</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="openOTLModal()">➕ Add Loan</button>
+                        <button class="btn btn-outline btn-sm" onclick="exportOTLCSV()">📥 Export</button>
+                    </div>
+                </div>
+                <div class="table-wrap"><table><thead><tr>
+                    <th>#</th><th>Team Member</th><th>Designation</th><th>Date Given</th><th>Amount Given (PKR)</th><th>Amount Recovered (PKR)</th><th>Remaining (PKR)</th><th>Recovery Date</th><th>Status</th><th>Notes</th><th>Actions</th>
+                </tr></thead><tbody id="otlTableBody"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="content-area" id="view-projects">
+            <div class="card">
+                <div class="card-header">
+                    <span>📋 Project Finance Tracker</span>
+                    <button class="btn btn-primary btn-sm" onclick="openProjectModal()">➕ Add Project</button>
+                </div>
+                <div class="table-wrap"><table><thead><tr>
+                    <th>#</th><th>Project/Client</th><th>Month</th><th>Client Owner</th><th>Work Done By</th><th>Junior Editor</th><th>Videos (My)</th><th>Rate/Video</th><th>Videos (Jr)</th><th>Rate/Video (Jr)</th><th>Gross (PKR)</th><th>Jr Cost</th><th>Net Profit</th><th>Ashir Share</th><th>Moiz Share</th><th>Notes</th><th>Actions</th>
+                </tr></thead><tbody id="projectsTableBody"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- Work Daily -->
+        <div class="content-area" id="view-work-daily">
+            <div class="card">
+                <div class="card-header">
+                    <span>📝 Daily Work Log</span>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <label style="font-size:0.78rem;">Editor:</label>
+                        <select id="workDailyEditor" onchange="renderDailyWork()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;">
+                            <option>Awais</option><option>Salman</option><option>Abubakar</option><option>Ashir</option><option>Moiz</option>
+                        </select>
+                        <label style="font-size:0.78rem;">Month:</label>
+                        <select id="workDailyMonth" onchange="renderDailyWork()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;"></select>
+                        <label style="font-size:0.78rem;">Work Days:</label>
+                        <input type="number" id="workDailyDays" value="22" min="1" max="31" onchange="renderDailyWork()" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:#fff;">
+                        <button class="btn btn-outline btn-sm" onclick="addWorkMonth()">➕ Add Month</button>
+                    </div>
+                </div>
+                <div class="table-wrap" id="dailyWorkTableWrap"></div>
+            </div>
+        </div>
+
+        <!-- Session Manager -->
+        <div class="content-area" id="view-work-session">
+            <div class="card">
+                <div class="card-header">
+                    <span>⚙️ Session Manager — Rates & Monthly Entry</span>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-primary btn-sm" onclick="renderSessionRates()">💰 Rates</button>
+                        <button class="btn btn-outline btn-sm" onclick="renderSessionMonthly()">📅 Monthly Entry</button>
+                        <button class="btn btn-outline btn-sm" onclick="renderSessionSummary()">📋 Summary</button>
+                    </div>
+                </div>
+                <div id="sessionContent" class="card-body"></div>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div class="content-area" id="view-reports">
+            <div class="card">
+                <div class="card-header">📈 Reports & Export Center</div>
+                <div class="card-body">
+                    <div class="summary-grid">
+                        <div class="stat-card accent-purple" style="cursor:pointer;" onclick="exportAllLoansCSV()">
+                            <div class="stat-icon">💰</div><div class="stat-label">Export All Loans</div><div class="stat-value" style="font-size:1rem;">CSV Download</div>
+                        </div>
+                        <div class="stat-card accent-green" style="cursor:pointer;" onclick="exportAllProjectsCSV()">
+                            <div class="stat-icon">📋</div><div class="stat-label">Export All Projects</div><div class="stat-value" style="font-size:1rem;">CSV Download</div>
+                        </div>
+                        <div class="stat-card accent-amber" style="cursor:pointer;" onclick="exportOneTimeLoansCSV()">
+                            <div class="stat-icon">🏦</div><div class="stat-label">Export One-Time Loans</div><div class="stat-value" style="font-size:1rem;">CSV Download</div>
+                        </div>
+                        <div class="stat-card accent-blue" style="cursor:pointer;" onclick="exportEmployeesCSV()">
+                            <div class="stat-icon">👥</div><div class="stat-label">Export Employees</div><div class="stat-value" style="font-size:1rem;">CSV Download</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:16px;">
+                        <div class="card-header">📊 Quick Summary Report</div>
+                        <div class="card-body" id="reportSummary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════ MODALS ═══════════ -->
+    <div class="modal-overlay" id="genericModalOverlay">
+        <div class="modal" id="genericModal"><div class="modal-header"><h3 id="genericModalTitle">Modal</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+            <div class="modal-body" id="genericModalBody"></div>
+            <div class="modal-footer" id="genericModalFooter"></div>
+        </div>
+    </div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ═══════════════════════════════════════════
+        //  VELOCITY HUB — COMPLETE FRONTEND ENGINE
+        // ═══════════════════════════════════════════
+        (function() {
+            // ── STATE ──────────────────────────
+            const API_BASE = window.location.origin + '/api';
+            let mongoConnected = false;
+            let currentView = 'dashboard';
+            let employees = [];
+            let loans = [];
+            let oneTimeLoans = [];
+            let projects = [];
+            let receivablesRows = [];
+            let workLogData = {};
+            let sessionRates = {};
+            let sessionMonthlyData = {};
+
+            const EDITORS = ['Awais', 'Salman', 'Abubakar', 'Ashir', 'Moiz'];
+            const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+                'October', 'November', 'December'
+            ];
+            const SESSIONS = ['Raw Cuts', 'Caption', 'Premiere Work', 'Complete Video', 'Extra', 'Extra 2'];
+            const DEFAULT_RATES = {
+                'Awais': { 'Raw Cuts': 50, 'Caption': 300, 'Premiere Work': 300, 'Complete Video': 600, 'Extra': 0,
+                    'Extra 2': 0 },
+                'Salman': { 'Raw Cuts': 50, 'Caption': 300, 'Premiere Work': 300, 'Complete Video': 600, 'Extra': 0,
+                    'Extra 2': 0 },
+                'Abubakar': { 'Raw Cuts': 50, 'Caption': 250, 'Premiere Work': 250, 'Complete Video': 500, 'Extra': 0,
+                    'Extra 2': 0 },
+                'Ashir': { 'Raw Cuts': 0, 'Caption': 750, 'Premiere Work': 750, 'Complete Video': 1500, 'Extra': 0,
+                    'Extra 2': 0 },
+                'Moiz': { 'Raw Cuts': 0, 'Caption': 750, 'Premiere Work': 750, 'Complete Video': 1500, 'Extra': 0,
+                    'Extra 2': 0 },
+            };
+            const RECEIVABLE_MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+            const SPLIT_RULES = {
+                'Ashir': { 'Ashir': 90, 'Moiz': 10, 'Junior Editor': 70 },
+                'Moiz': { 'Moiz': 10, 'Ashir': 90, 'Junior Editor': 30 }
+            };
+
+            // ── DOM REFS ──────────────────────
+            const $sidebar = document.getElementById('sidebar');
+            const $mainContent = document.getElementById('mainContent');
+            const $pageTitle = document.getElementById('pageTitle');
+            const $connectionStatus = document.getElementById('connectionStatus');
+            const $toastContainer = document.getElementById('toastContainer');
+            const $genericModalOverlay = document.getElementById('genericModalOverlay');
+            const $genericModalTitle = document.getElementById('genericModalTitle');
+            const $genericModalBody = document.getElementById('genericModalBody');
+            const $genericModalFooter = document.getElementById('genericModalFooter');
+
+            // ── NAVIGATION ────────────────────
+            document.querySelectorAll('.sidebar-nav button[data-view]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const view = this.dataset.view;
+                    switchView(view);
+                });
+            });
+
+            function switchView(view) {
+                currentView = view;
+                document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+                const btn = document.querySelector(`.sidebar-nav button[data-view="${view}"]`);
+                if (btn) btn.classList.add('active');
+                document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
+                const contentEl = document.getElementById('view-' + view);
+                if (contentEl) contentEl.classList.add('active');
+                const titles = {
+                    dashboard: '📊 Dashboard',
+                    employees: '👥 Employee Directory',
+                    loans: '💰 Loan Tracker',
+                    'monthly-receivables': '📅 Monthly Receivables',
+                    'one-time-loans': '🏦 One-Time Loans',
+                    projects: '📋 Project Finance',
+                    'work-daily': '📝 Daily Work Log',
+                    'work-session': '⚙️ Session Manager',
+                    reports: '📈 Reports & Export'
+                };
+                $pageTitle.textContent = titles[view] || view;
+                loadViewData(view);
+            }
+
+            function loadViewData(view) {
+                switch (view) {
+                    case 'dashboard':
+                        renderDashboard();
+                        break;
+                    case 'employees':
+                        renderEmployees();
+                        break;
+                    case 'loans':
+                        renderLoans();
+                        break;
+                    case 'monthly-receivables':
+                        renderReceivables();
+                        break;
+                    case 'one-time-loans':
+                        renderOneTimeLoans();
+                        break;
+                    case 'projects':
+                        renderProjects();
+                        break;
+                    case 'work-daily':
+                        renderDailyWork();
+                        break;
+                    case 'work-session':
+                        renderSessionRates();
+                        break;
+                    case 'reports':
+                        renderReports();
+                        break;
+                }
+            }
+
+            // ── API CALLS ──────────────────────
+            async function apiCall(method, endpoint, data = null) {
+                try {
+                    const options = {
+                        method,
+                        headers: { 'Content-Type': 'application/json' },
+                    };
+                    if (data && (method === 'POST' || method === 'PUT')) {
+                        options.body = JSON.stringify(data);
+                    }
+                    const res = await fetch(API_BASE + endpoint, options);
+                    if (!res.ok) throw new Error('API Error: ' + res.status);
+                    return await res.json();
+                } catch (err) {
+                    console.warn('API call failed, using local storage:', err.message);
+                    return null;
+                }
+            }
+
+            async function checkConnection() {
+                const result = await apiCall('GET', '/health');
+                if (result && result.status === 'ok') {
+                    mongoConnected = true;
+                    $connectionStatus.textContent = '● Connected';
+                    $connectionStatus.className = 'connection-status status-connected';
+                } else {
+                    mongoConnected = false;
+                    $connectionStatus.textContent = '● Offline Mode';
+                    $connectionStatus.className = 'connection-status status-disconnected';
+                }
+            }
+
+            // ── LOCAL STORAGE FALLBACKS ────────
+            function getLocal(key, defaultVal) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    return raw ? JSON.parse(raw) : defaultVal;
+                } catch (e) { return defaultVal; }
+            }
+
+            function setLocal(key, val) {
+                try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+            }
+
+            // ── TOAST ──────────────────────────
+            function showToast(msg, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = msg;
+                $toastContainer.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0';
+                    toast.style.transition = 'all 0.3s';
+                    setTimeout(() => toast.remove(), 300); }, 2500);
+            }
+
+            // ── GENERIC MODAL ──────────────────
+            function openGenericModal(title, bodyHTML, footerHTML) {
+                $genericModalTitle.textContent = title;
+                $genericModalBody.innerHTML = bodyHTML;
+                $genericModalFooter.innerHTML = footerHTML;
+                $genericModalOverlay.classList.add('active');
+            }
+
+            function closeGenericModal() {
+                $genericModalOverlay.classList.remove('active');
+            }
+            $genericModalOverlay.addEventListener('click', function(e) {
+                if (e.target === $genericModalOverlay) closeGenericModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && $genericModalOverlay.classList.contains('active')) closeGenericModal();
+            });
+
+            // ── FORMAT HELPERS ──────────────────
+            function formatPKR(amount) {
+                if (amount === null || amount === undefined || isNaN(amount)) return '—';
+                return 'PKR ' + Math.round(Number(amount)).toLocaleString('en-PK');
+            }
+
+            function formatPKRCompact(amount) {
+                if (amount === null || amount === undefined || isNaN(amount)) return '';
+                return Math.round(Number(amount)).toLocaleString('en-PK');
+            }
+
+            function escapeHTML(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function formatDate(d) {
+                if (!d) return '—';
+                const dt = new Date(d + 'T00:00:00');
+                if (isNaN(dt.getTime())) return d;
+                return dt.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
+            }
+
+            // ══════════════════════════════════
+            //  DASHBOARD
+            // ══════════════════════════════════
+            function renderDashboard() {
+                loans = getLocal('velocity_loans', []);
+                oneTimeLoans = getLocal('velocity_otl', []);
+                projects = getLocal('velocity_projects', []);
+                employees = getLocal('velocity_employees', []);
+                receivablesRows = getLocal('velocity_receivables', []);
+
+                const pendingLoans = loans.filter(l => l.status === 'Pending').reduce((s, l) => s + (Number(l.amount) ||
+                    0), 0);
+                const pendingOTL = oneTimeLoans.filter(l => (Number(l.amountGiven) || 0) > (Number(l.amountRecovered) ||
+                    0)).reduce((s, l) => s + (Number(l.amountGiven) || 0) - (Number(l.amountRecovered) || 0), 0);
+                const totalProjects = projects.length;
+                const totalEmployees = employees.length;
+                const totalReceivablePending = receivablesRows.reduce((s, r) => {
+                    let td = 0,
+                        tr = 0;
+                    RECEIVABLE_MONTHS.forEach(m => { td += Number(r.months?.[m]?.total) || 0;
+                        tr += Number(r.months?.[m]?.received) || 0; });
+                    return s + (td - tr);
+                }, 0);
+
+                document.getElementById('dashboardSummary').innerHTML = `
+                    <div class="stat-card accent-purple"><div class="stat-icon">💰</div><div class="stat-label">Total Pending Loans</div><div class="stat-value">${formatPKR(pendingLoans)}</div></div>
+                    <div class="stat-card accent-amber"><div class="stat-icon">🏦</div><div class="stat-label">Pending One-Time Loans</div><div class="stat-value">${formatPKR(pendingOTL)}</div></div>
+                    <div class="stat-card accent-red"><div class="stat-icon">📥</div><div class="stat-label">Pending Receivables</div><div class="stat-value">${formatPKR(totalReceivablePending)}</div></div>
+                    <div class="stat-card accent-green"><div class="stat-icon">📋</div><div class="stat-label">Total Projects</div><div class="stat-value">${totalProjects}</div></div>
+                    <div class="stat-card accent-blue"><div class="stat-icon">👥</div><div class="stat-label">Employees</div><div class="stat-value">${totalEmployees}</div></div>
+                `;
+                document.getElementById('recentActivity').innerHTML = `
+                    <p>📌 <strong>${loans.length}</strong> loan transactions | <strong>${oneTimeLoans.length}</strong> one-time loans | <strong>${projects.length}</strong> projects | <strong>${receivablesRows.length}</strong> receivable persons</p>
+                    <p class="text-muted" style="margin-top:8px;">💡 All data is saved locally. Connect MongoDB for cloud storage.</p>
+                `;
+            }
+
+            // ══════════════════════════════════
+            //  EMPLOYEES
+            // ══════════════════════════════════
+            function renderEmployees() {
+                employees = getLocal('velocity_employees', []);
+                const tbody = document.getElementById('employeesTableBody');
+                if (employees.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="8" class="empty-state"><span class="icon">👥</span><p>No employees yet.</p></td></tr>';
+                    return;
+                }
+                tbody.innerHTML = employees.map((e, i) => `
+                    <tr>
+                        <td>${i+1}</td><td><strong>${escapeHTML(e.name)}</strong></td>
+                        <td>${escapeHTML(e.designation||'—')}</td><td>${escapeHTML(e.phone||'—')}</td>
+                        <td>${escapeHTML(e.email||'—')}</td><td>${formatDate(e.joinDate)}</td>
+                        <td><span class="badge badge-completed">Active</span></td>
+                        <td>
+                            <button class="btn btn-outline btn-xs" onclick="editEmployee(${i})">✏️</button>
+                            <button class="btn btn-danger btn-xs" onclick="deleteEmployee(${i})">🗑️</button>
+                        </td>
+                    </tr>`).join('');
+            }
+
+            function openEmployeeModal(idx = null) {
+                const isEdit = idx !== null && idx >= 0;
+                const emp = isEdit ? employees[idx] : {};
+                openGenericModal(isEdit ? '✏️ Edit Employee' : '➕ Add Employee', `
+                    <input type="hidden" id="empEditIdx" value="${isEdit?idx:''}">
+                    <div class="form-row"><div class="form-group"><label>Name *</label><input id="empName" value="${escapeHTML(emp.name||'')}"></div>
+                    <div class="form-group"><label>Designation</label><input id="empDesignation" value="${escapeHTML(emp.designation||'')}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Phone</label><input id="empPhone" value="${escapeHTML(emp.phone||'')}"></div>
+                    <div class="form-group"><label>Email</label><input id="empEmail" value="${escapeHTML(emp.email||'')}"></div></div>
+                    <div class="form-group"><label>Join Date</label><input type="date" id="empJoinDate" value="${emp.joinDate||''}"></div>
+                `, `<button class="btn btn-outline" onclick="closeGenericModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveEmployee()">💾 Save</button>`);
+            }
+
+            function saveEmployee() {
+                const idx = document.getElementById('empEditIdx')?.value;
+                const data = {
+                    name: document.getElementById('empName')?.value?.trim() || '',
+                    designation: document.getElementById('empDesignation')?.value?.trim() || '',
+                    phone: document.getElementById('empPhone')?.value?.trim() || '',
+                    email: document.getElementById('empEmail')?.value?.trim() || '',
+                    joinDate: document.getElementById('empJoinDate')?.value || '',
+                };
+                if (!data.name) { showToast('Name is required!');
+                    return; }
+                if (idx !== '' && idx !== null && idx !== undefined) {
+                    employees[parseInt(idx)] = { ...employees[parseInt(idx)], ...data };
+                } else {
+                    employees.push({ ...data, id: Date.now() });
+                }
+                setLocal('velocity_employees', employees);
+                closeGenericModal();
+                renderEmployees();
+                showToast('✅ Employee saved!');
+            }
+
+            function editEmployee(idx) { openEmployeeModal(idx); }
+
+            function deleteEmployee(idx) {
+                if (confirm('Delete this employee?')) { employees.splice(idx, 1);
+                    setLocal('velocity_employees', employees);
+                    renderEmployees();
+                    showToast('🗑️ Employee deleted.'); }
+            }
+
+            // ══════════════════════════════════
+            //  LOAN TRACKER
+            // ══════════════════════════════════
+            function renderLoans() {
+                loans = getLocal('velocity_loans', []);
+                const search = (document.getElementById('loanSearch')?.value || '').toLowerCase();
+                const typeF = document.getElementById('loanTypeFilter')?.value || 'All';
+                const statusF = document.getElementById('loanStatusFilter')?.value || 'All';
+                let filtered = loans.filter(l => {
+                    return (l.name?.toLowerCase().includes(search)) && (typeF === 'All' || l.type === typeF) && (
+                        statusF === 'All' || l.status === statusF);
+                });
+                const tbody = document.getElementById('loansTableBody');
+                if (filtered.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="10" class="empty-state"><span class="icon">📭</span><p>No transactions.</p></td></tr>';
+                } else {
+                    tbody.innerHTML = filtered.map((l, i) => {
+                        const typeBadge = l.type === 'Loan Taken' ? 'badge-loan-taken' : l.type === 'Loan Given' ?
+                            'badge-loan-given' : 'badge-receivable';
+                        const statusBadge = l.status === 'Pending' ? 'badge-pending' : 'badge-completed';
+                        return `<tr>
+                            <td>${i+1}</td><td><strong>${escapeHTML(l.name)}</strong></td><td>${formatDate(l.date)}</td>
+                            <td><span class="badge ${typeBadge}">${escapeHTML(l.type)}</span></td>
+                            <td>${escapeHTML(l.category||'—')}</td><td>${escapeHTML(l.details||'—')}</td>
+                            <td class="amount-cell">${formatPKR(l.amount)}</td>
+                            <td><span class="badge ${statusBadge}">${escapeHTML(l.status)}</span></td>
+                            <td>${escapeHTML(l.remarks||'—')}</td>
+                            <td>
+                                <button class="btn btn-outline btn-xs" onclick="editLoan(${loans.indexOf(l)})">✏️</button>
+                                <button class="btn btn-danger btn-xs" onclick="deleteLoan(${loans.indexOf(l)})">🗑️</button>
+                                ${l.status==='Pending'?`<button class="btn btn-success btn-xs" onclick="markLoanComplete(${loans.indexOf(l)})">✅</button>`:''}
+                            </td></tr>`;
+                    }).join('');
+                }
+                updateLoansSummary();
+            }
+
+            function updateLoansSummary() {
+                loans = getLocal('velocity_loans', []);
+                let takenP = 0,
+                    givenP = 0,
+                    recP = 0,
+                    totalP = 0;
+                loans.forEach(l => {
+                    if (l.status === 'Pending') {
+                        const amt = Number(l.amount) || 0;
+                        if (l.type === 'Loan Taken') takenP += amt;
+                        if (l.type === 'Loan Given') givenP += amt;
+                        if (l.type === 'Receivable') recP += amt;
+                        totalP += amt;
+                    }
+                });
+                document.getElementById('loansSummaryCards').innerHTML = `
+                    <div class="stat-card accent-red"><div class="stat-icon">💰</div><div class="stat-label">Loan Taken Pending</div><div class="stat-value">${formatPKR(takenP)}</div></div>
+                    <div class="stat-card accent-green"><div class="stat-icon">💸</div><div class="stat-label">Loan Given Pending</div><div class="stat-value">${formatPKR(givenP)}</div></div>
+                    <div class="stat-card accent-amber"><div class="stat-icon">📥</div><div class="stat-label">Receivables Pending</div><div class="stat-value">${formatPKR(recP)}</div></div>
+                    <div class="stat-card accent-purple"><div class="stat-icon">📋</div><div class="stat-label">Total Outstanding</div><div class="stat-value">${formatPKR(totalP)}</div></div>
+                `;
+            }
+
+            function openLoanModal(idx = null) {
+                const isEdit = idx !== null && idx >= 0;
+                const l = isEdit ? loans[idx] : {};
+                openGenericModal(isEdit ? '✏️ Edit Transaction' : '➕ Add Transaction', `
+                    <input type="hidden" id="loanEditIdx" value="${isEdit?idx:''}">
+                    <div class="form-row"><div class="form-group"><label>Name *</label><input id="loanName" value="${escapeHTML(l.name||'')}"></div>
+                    <div class="form-group"><label>Date</label><input type="date" id="loanDate" value="${l.date||''}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Type *</label><select id="loanType"><option ${l.type==='Loan Taken'?'selected':''}>Loan Taken</option><option ${l.type==='Loan Given'?'selected':''}>Loan Given</option><option ${l.type==='Receivable'?'selected':''}>Receivable</option></select></div>
+                    <div class="form-group"><label>Category</label><input id="loanCategory" value="${escapeHTML(l.category||'')}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Amount (PKR) *</label><input type="number" id="loanAmount" value="${l.amount||''}" min="1" step="1"></div>
+                    <div class="form-group"><label>Status</label><select id="loanStatus"><option ${l.status==='Pending'?'selected':''}>Pending</option><option ${l.status==='Completed'?'selected':''}>Completed</option></select></div></div>
+                    <div class="form-group"><label>Details</label><textarea id="loanDetails">${escapeHTML(l.details||'')}</textarea></div>
+                    <div class="form-group"><label>Remarks</label><input id="loanRemarks" value="${escapeHTML(l.remarks||'')}"></div>
+                `, `<button class="btn btn-outline" onclick="closeGenericModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveLoan()">💾 Save</button>`);
+            }
+
+            function saveLoan() {
+                const idx = document.getElementById('loanEditIdx')?.value;
+                const data = {
+                    id: Date.now(),
+                    name: document.getElementById('loanName')?.value?.trim() || '',
+                    date: document.getElementById('loanDate')?.value || '',
+                    type: document.getElementById('loanType')?.value || 'Loan Taken',
+                    category: document.getElementById('loanCategory')?.value?.trim() || '',
+                    amount: parseFloat(document.getElementById('loanAmount')?.value) || 0,
+                    status: document.getElementById('loanStatus')?.value || 'Pending',
+                    details: document.getElementById('loanDetails')?.value?.trim() || '',
+                    remarks: document.getElementById('loanRemarks')?.value?.trim() || '',
+                };
+                if (!data.name || !data.amount) { showToast('Name and Amount required!');
+                    return; }
+                if (idx !== '' && idx !== null && idx !== undefined) {
+                    data.id = loans[parseInt(idx)].id;
+                    loans[parseInt(idx)] = data;
+                } else {
+                    loans.push(data);
+                }
+                setLocal('velocity_loans', loans);
+                closeGenericModal();
+                renderLoans();
+                showToast('✅ Transaction saved!');
+            }
+
+            function editLoan(idx) { openLoanModal(idx); }
+
+            function deleteLoan(idx) {
+                if (confirm('Delete this transaction?')) { loans.splice(idx, 1);
+                    setLocal('velocity_loans', loans);
+                    renderLoans();
+                    showToast('🗑️ Deleted.'); }
+            }
+
+            function markLoanComplete(idx) {
+                loans[idx].status = 'Completed';
+                setLocal('velocity_loans', loans);
+                renderLoans();
+                showToast('✅ Marked as Completed!');
+            }
+
+            function exportLoansCSV() {
+                loans = getLocal('velocity_loans', []);
+                const csv = ['Name,Date,Type,Category,Details,Amount,Status,Remarks'].concat(loans.map(l =>
+                    [l.name, l.date, l.type, l.category, l.details, l.amount, l.status, l.remarks].map(
+                    escapeHTML).join(','))).join('\n');
+                downloadCSV('loans_export.csv', csv);
+            }
+
+            // ══════════════════════════════════
+            //  MONTHLY RECEIVABLES
+            // ══════════════════════════════════
+            function renderReceivables() {
+                receivablesRows = getLocal('velocity_receivables', []);
+                if (receivablesRows.length === 0) {
+                    receivablesRows = [
+                        { id: Date.now(), name: 'Ashir', notes: '', months: initReceivableMonths(15000, 0) },
+                        { id: Date.now() + 1, name: 'Awais', notes: '', months: initReceivableMonths(15000,
+                            9000) },
+                    ];
+                    setLocal('velocity_receivables', receivablesRows);
+                }
+                const head = document.getElementById('receivablesHead');
+                const body = document.getElementById('receivablesBody');
+                const foot = document.getElementById('receivablesFoot');
+                head.innerHTML = `<tr><th rowspan="2">#</th><th rowspan="2">Name</th><th rowspan="2">Notes</th>
+                    ${RECEIVABLE_MONTHS.map(m=>`<th colspan="2">${m.toUpperCase()}</th>`).join('')}
+                    <th rowspan="2">Total Due</th><th rowspan="2">Total Received</th><th rowspan="2">Remaining</th><th rowspan="2"></th></tr>
+                    <tr>${RECEIVABLE_MONTHS.map(()=>'<th>Total</th><th>Rec</th>').join('')}</tr>`;
+                body.innerHTML = receivablesRows.map((r, i) => {
+                    let td = 0,
+                        tr = 0;
+                    RECEIVABLE_MONTHS.forEach(m => { td += Number(r.months?.[m]?.total) || 0;
+                        tr += Number(r.months?.[m]?.received) || 0; });
+                    const rem = td - tr;
+                    const remCls = rem > 0 ? 'color:#f87171;' : rem < 0 ? 'color:#34d399;' : 'color:#fbbf24;';
+                    return `<tr>
+                        <td>${i+1}</td><td><input value="${escapeHTML(r.name)}" data-rid="${r.id}" data-field="name" style="width:100px;background:#0f172a;color:#fff;border:1px solid #334155;padding:4px;border-radius:4px;"></td>
+                        <td><input value="${escapeHTML(r.notes||'')}" data-rid="${r.id}" data-field="notes" style="width:120px;background:#0f172a;color:#fff;border:1px solid #334155;padding:4px;border-radius:4px;"></td>
+                        ${RECEIVABLE_MONTHS.map(m=>`
+                            <td><input type="number" value="${r.months?.[m]?.total||0}" data-rid="${r.id}" data-month="${m}" data-field="total" style="width:60px;background:#0f172a;color:#fff;border:1px solid #334155;padding:4px;border-radius:4px;text-align:right;"></td>
+                            <td><input type="number" value="${r.months?.[m]?.received||0}" data-rid="${r.id}" data-month="${m}" data-field="received" style="width:60px;background:#0f172a;color:#34d399;border:1px solid #334155;padding:4px;border-radius:4px;text-align:right;"></td>
+                        `).join('')}
+                        <td class="amount-cell">${formatPKR(td)}</td><td class="amount-cell">${formatPKR(tr)}</td>
+                        <td class="amount-cell" style="${remCls}font-weight:700;">${formatPKR(rem)}</td>
+                        <td><button class="btn btn-danger btn-xs" onclick="deleteReceivableRow(${i})">✕</button></td>
+                    </tr>`;
+                }).join('');
+                // Grand totals
+                let gtd = 0,
+                    gtr = 0;
+                receivablesRows.forEach(r => {
+                    RECEIVABLE_MONTHS.forEach(m => { gtd += Number(r.months?.[m]?.total) || 0;
+                        gtr += Number(r.months?.[m]?.received) || 0; });
+                });
+                foot.innerHTML =
+                    `<tr style="background:#1a202c;font-weight:700;"><td colspan="3">★ GRAND TOTALS</td>${RECEIVABLE_MONTHS.map(()=>'<td colspan="2"></td>').join('')}<td class="amount-cell">${formatPKR(gtd)}</td><td class="amount-cell">${formatPKR(gtr)}</td><td class="amount-cell">${formatPKR(gtd-gtr)}</td><td></td></tr>`;
+                attachReceivableListeners();
+            }
+
+            function initReceivableMonths(mayTotal, mayReceived) {
+                const months = {};
+                RECEIVABLE_MONTHS.forEach(m => { months[m] = { total: m === 'may' ? mayTotal : 0, received: m ===
+                        'may' ? mayReceived : 0 }; });
+                return months;
+            }
+
+            function attachReceivableListeners() {
+                document.querySelectorAll('#receivablesBody input').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        const rid = parseInt(this.dataset.rid);
+                        const field = this.dataset.field;
+                        const month = this.dataset.month;
+                        const row = receivablesRows.find(r => r.id === rid);
+                        if (!row) return;
+                        if (month) {
+                            if (!row.months) row.months = {};
+                            if (!row.months[month]) row.months[month] = { total: 0,
+                            received: 0 };
+                            row.months[month][field] = parseFloat(this.value) || 0;
+                        } else {
+                            row[field] = this.value;
+                        }
+                        setLocal('velocity_receivables', receivablesRows);
+                        renderReceivables();
+                    });
+                });
+            }
+
+            function addReceivableRow() {
+                receivablesRows.push({ id: Date.now(), name: '', notes: '', months: initReceivableMonths(0, 0) });
+                setLocal('velocity_receivables', receivablesRows);
+                renderReceivables();
+            }
+
+            function deleteReceivableRow(idx) {
+                if (receivablesRows.length <= 1) { showToast('Cannot delete last row.');
+                    return; }
+                receivablesRows.splice(idx, 1);
+                setLocal('velocity_receivables', receivablesRows);
+                renderReceivables();
+            }
+
+            // ══════════════════════════════════
+            //  ONE-TIME LOANS
+            // ══════════════════════════════════
+            function renderOneTimeLoans() {
+                oneTimeLoans = getLocal('velocity_otl', []);
+                const filter = document.getElementById('otlFilter')?.value || 'all';
+                let filtered = [...oneTimeLoans];
+                if (filter === 'pending') filtered = filtered.filter(l => (Number(l.amountGiven) || 0) > (Number(l
+                    .amountRecovered) || 0));
+                if (filter === 'paid') filtered = filtered.filter(l => (Number(l.amountGiven) || 0) <= (Number(l
+                    .amountRecovered) || 0) && (Number(l.amountGiven) || 0) > 0);
+                const tbody = document.getElementById('otlTableBody');
+                if (filtered.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="11" class="empty-state"><span class="icon">🏦</span><p>No one-time loans.</p></td></tr>';
+                } else {
+                    tbody.innerHTML = filtered.map((l, i) => {
+                        const remaining = (Number(l.amountGiven) || 0) - (Number(l.amountRecovered) || 0);
+                        const status = remaining <= 0 ? 'badge-completed' : 'badge-pending';
+                        const statusText = remaining <= 0 ? '✅ Paid' : '⏳ Pending';
+                        return `<tr>
+                            <td>${i+1}</td><td><strong>${escapeHTML(l.teamMember)}</strong></td><td>${escapeHTML(l.designation||'—')}</td>
+                            <td>${formatDate(l.dateGiven)}</td><td class="amount-cell">${formatPKR(l.amountGiven)}</td>
+                            <td class="amount-cell">${formatPKR(l.amountRecovered)}</td>
+                            <td class="amount-cell" style="color:${remaining>0?'#f87171':'#34d399'};">${formatPKR(remaining)}</td>
+                            <td>${formatDate(l.recoveryDate)}</td><td><span class="badge ${status}">${statusText}</span></td>
+                            <td>${escapeHTML(l.notes||'—')}</td>
+                            <td>
+                                <button class="btn btn-outline btn-xs" onclick="editOTL(${oneTimeLoans.indexOf(l)})">✏️</button>
+                                <button class="btn btn-danger btn-xs" onclick="deleteOTL(${oneTimeLoans.indexOf(l)})">🗑️</button>
+                            </td></tr>`;
+                    }).join('');
+                }
+                updateOTLSummary();
+            }
+
+            function updateOTLSummary() {
+                oneTimeLoans = getLocal('velocity_otl', []);
+                const totalGiven = oneTimeLoans.reduce((s, l) => s + (Number(l.amountGiven) || 0), 0);
+                const totalRecovered = oneTimeLoans.reduce((s, l) => s + (Number(l.amountRecovered) || 0), 0);
+                const totalPending = oneTimeLoans.filter(l => (Number(l.amountGiven) || 0) > (Number(l.amountRecovered) ||
+                    0)).reduce((s, l) => s + (Number(l.amountGiven) || 0) - (Number(l.amountRecovered) || 0), 0);
+                document.getElementById('otlSummaryCards').innerHTML = `
+                    <div class="stat-card accent-purple"><div class="stat-icon">💸</div><div class="stat-label">Total Given</div><div class="stat-value">${formatPKR(totalGiven)}</div></div>
+                    <div class="stat-card accent-green"><div class="stat-icon">💰</div><div class="stat-label">Total Recovered</div><div class="stat-value">${formatPKR(totalRecovered)}</div></div>
+                    <div class="stat-card accent-amber"><div class="stat-icon">⏳</div><div class="stat-label">Total Pending</div><div class="stat-value">${formatPKR(totalPending)}</div></div>
+                `;
+            }
+
+            function openOTLModal(idx = null) {
+                const isEdit = idx !== null && idx >= 0;
+                const l = isEdit ? oneTimeLoans[idx] : {};
+                openGenericModal(isEdit ? '✏️ Edit One-Time Loan' : '➕ Add One-Time Loan', `
+                    <input type="hidden" id="otlEditIdx" value="${isEdit?idx:''}">
+                    <div class="form-row"><div class="form-group"><label>Team Member *</label><input id="otlMember" value="${escapeHTML(l.teamMember||'')}" list="memberList"><datalist id="memberList">${EDITORS.map(e=>`<option value="${e}">`).join('')}</datalist></div>
+                    <div class="form-group"><label>Designation</label><input id="otlDesignation" value="${escapeHTML(l.designation||'')}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Date Given</label><input type="date" id="otlDateGiven" value="${l.dateGiven||''}"></div>
+                    <div class="form-group"><label>Recovery Date</label><input type="date" id="otlRecoveryDate" value="${l.recoveryDate||''}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Amount Given (PKR) *</label><input type="number" id="otlAmountGiven" value="${l.amountGiven||''}" min="0"></div>
+                    <div class="form-group"><label>Amount Recovered (PKR)</label><input type="number" id="otlAmountRecovered" value="${l.amountRecovered||0}" min="0"></div></div>
+                    <div class="form-group"><label>Notes</label><input id="otlNotes" value="${escapeHTML(l.notes||'')}"></div>
+                `, `<button class="btn btn-outline" onclick="closeGenericModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveOTL()">💾 Save</button>`);
+            }
+
+            function saveOTL() {
+                const idx = document.getElementById('otlEditIdx')?.value;
+                const data = {
+                    id: Date.now(),
+                    teamMember: document.getElementById('otlMember')?.value?.trim() || '',
+                    designation: document.getElementById('otlDesignation')?.value?.trim() || '',
+                    dateGiven: document.getElementById('otlDateGiven')?.value || '',
+                    recoveryDate: document.getElementById('otlRecoveryDate')?.value || '',
+                    amountGiven: parseFloat(document.getElementById('otlAmountGiven')?.value) || 0,
+                    amountRecovered: parseFloat(document.getElementById('otlAmountRecovered')?.value) || 0,
+                    notes: document.getElementById('otlNotes')?.value?.trim() || '',
+                };
+                if (!data.teamMember) { showToast('Team member required!');
+                    return; }
+                if (idx !== '' && idx !== null && idx !== undefined) {
+                    data.id = oneTimeLoans[parseInt(idx)].id;
+                    oneTimeLoans[parseInt(idx)] = data;
+                } else { oneTimeLoans.push(data); }
+                setLocal('velocity_otl', oneTimeLoans);
+                closeGenericModal();
+                renderOneTimeLoans();
+                showToast('✅ Loan saved!');
+            }
+
+            function editOTL(idx) { openOTLModal(idx); }
+
+            function deleteOTL(idx) {
+                if (confirm('Delete this loan?')) { oneTimeLoans.splice(idx, 1);
+                    setLocal('velocity_otl', oneTimeLoans);
+                    renderOneTimeLoans();
+                    showToast('🗑️ Deleted.'); }
+            }
+
+            function exportOTLCSV() {
+                oneTimeLoans = getLocal('velocity_otl', []);
+                const csv = ['Team Member,Designation,Date Given,Amount Given,Amount Recovered,Remaining,Recovery Date,Status,Notes']
+                    .concat(oneTimeLoans.map(l => [l.teamMember, l.designation, l.dateGiven, l.amountGiven, l
+                        .amountRecovered, (Number(l.amountGiven) || 0) - (Number(l.amountRecovered) || 0), l
+                        .recoveryDate, (Number(l.amountGiven) || 0) <= (Number(l.amountRecovered) || 0) ?
+                        'Paid' : 'Pending', l.notes
+                    ].join(','))).join('\n');
+                downloadCSV('one_time_loans.csv', csv);
+            }
+
+            // ══════════════════════════════════
+            //  PROJECTS
+            // ══════════════════════════════════
+            function renderProjects() {
+                projects = getLocal('velocity_projects', []);
+                const tbody = document.getElementById('projectsTableBody');
+                if (projects.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="17" class="empty-state"><span class="icon">📋</span><p>No projects yet.</p></td></tr>';
+                    return;
+                }
+                tbody.innerHTML = projects.map((p, i) => {
+                    const vMy = Number(p.videosMyWork) || 0;
+                    const rMy = Number(p.perVideoRateMyWork) || 0;
+                    const vJr = Number(p.videosJunior) || 0;
+                    const rJr = Number(p.perVideoRateJunior) || 0;
+                    const gross = vMy * rMy;
+                    const jrCost = vJr * rJr;
+                    const net = gross - jrCost;
+                    const rule = SPLIT_RULES[p.clientOwner]?.[p.workDoneBy];
+                    const ashirPct = rule ? rule / 100 : 0.5;
+                    const ashir = Math.round(net * ashirPct);
+                    const moiz = net - ashir;
+                    return `<tr>
+                        <td>${i+1}</td><td><strong>${escapeHTML(p.projectName)}</strong></td><td>${escapeHTML(p.month)}</td>
+                        <td>${escapeHTML(p.clientOwner)}</td><td>${escapeHTML(p.workDoneBy)}</td><td>${escapeHTML(p.juniorEditorName||'—')}</td>
+                        <td>${vMy}</td><td>${formatPKRCompact(rMy)}</td><td>${vJr}</td><td>${formatPKRCompact(rJr)}</td>
+                        <td class="amount-cell">${formatPKR(gross)}</td><td class="amount-cell">${formatPKR(jrCost)}</td>
+                        <td class="amount-cell" style="color:#34d399;">${formatPKR(net)}</td>
+                        <td class="amount-cell">${formatPKR(ashir)}</td><td class="amount-cell">${formatPKR(moiz)}</td>
+                        <td>${escapeHTML(p.notes||'—')}</td>
+                        <td><button class="btn btn-outline btn-xs" onclick="editProject(${i})">✏️</button>
+                        <button class="btn btn-danger btn-xs" onclick="deleteProject(${i})">🗑️</button></td>
+                    </tr>`;
+                }).join('');
+            }
+
+            function openProjectModal(idx = null) {
+                const isEdit = idx !== null && idx >= 0;
+                const p = isEdit ? projects[idx] : {};
+                openGenericModal(isEdit ? '✏️ Edit Project' : '➕ Add Project', `
+                    <input type="hidden" id="projEditIdx" value="${isEdit?idx:''}">
+                    <div class="form-group"><label>Project Name *</label><input id="projName" value="${escapeHTML(p.projectName||'')}"></div>
+                    <div class="form-row"><div class="form-group"><label>Month</label><select id="projMonth">${MONTHS.map(m=>`<option ${p.month===m?'selected':''}>${m}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Client Owner</label><select id="projOwner"><option>Ashir</option><option>Moiz</option></select></div></div>
+                    <div class="form-row"><div class="form-group"><label>Work Done By</label><select id="projWorkBy"><option>Ashir</option><option>Moiz</option><option>Junior Editor</option></select></div>
+                    <div class="form-group"><label>Junior Editor Name</label><input id="projJrName" value="${escapeHTML(p.juniorEditorName||'')}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Videos (My Work)</label><input type="number" id="projVMy" value="${p.videosMyWork||''}"></div>
+                    <div class="form-group"><label>Rate/Video (PKR)</label><input type="number" id="projRMy" value="${p.perVideoRateMyWork||''}"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Videos (Junior)</label><input type="number" id="projVJr" value="${p.videosJunior||''}"></div>
+                    <div class="form-group"><label>Rate/Video Jr (PKR)</label><input type="number" id="projRJr" value="${p.perVideoRateJunior||''}"></div></div>
+                    <div class="form-group"><label>Notes</label><input id="projNotes" value="${escapeHTML(p.notes||'')}"></div>
+                `, `<button class="btn btn-outline" onclick="closeGenericModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveProject()">💾 Save</button>`);
+                if (isEdit) {
+                    document.getElementById('projOwner').value = p.clientOwner || 'Ashir';
+                    document.getElementById('projWorkBy').value = p.workDoneBy || 'Ashir';
+                }
+            }
+
+            function saveProject() {
+                const idx = document.getElementById('projEditIdx')?.value;
+                const data = {
+                    id: Date.now(),
+                    projectName: document.getElementById('projName')?.value?.trim() || '',
+                    month: document.getElementById('projMonth')?.value || '',
+                    clientOwner: document.getElementById('projOwner')?.value || 'Ashir',
+                    workDoneBy: document.getElementById('projWorkBy')?.value || 'Ashir',
+                    juniorEditorName: document.getElementById('projJrName')?.value?.trim() || '',
+                    videosMyWork: parseFloat(document.getElementById('projVMy')?.value) || null,
+                    perVideoRateMyWork: parseFloat(document.getElementById('projRMy')?.value) || null,
+                    videosJunior: parseFloat(document.getElementById('projVJr')?.value) || null,
+                    perVideoRateJunior: parseFloat(document.getElementById('projRJr')?.value) || null,
+                    notes: document.getElementById('projNotes')?.value?.trim() || '',
+                };
+                if (!data.projectName) { showToast('Project name required!');
+                    return; }
+                if (idx !== '' && idx !== null && idx !== undefined) {
+                    data.id = projects[parseInt(idx)].id;
+                    projects[parseInt(idx)] = data;
+                } else { projects.push(data); }
+                setLocal('velocity_projects', projects);
+                closeGenericModal();
+                renderProjects();
+                showToast('✅ Project saved!');
+            }
+
+            function editProject(idx) { openProjectModal(idx); }
+
+            function deleteProject(idx) {
+                if (confirm('Delete this project?')) { projects.splice(idx, 1);
+                    setLocal('velocity_projects', projects);
+                    renderProjects();
+                    showToast('🗑️ Deleted.'); }
+            }
+
+            // ══════════════════════════════════
+            //  DAILY WORK LOG
+            // ══════════════════════════════════
+            function renderDailyWork() {
+                workLogData = getLocal('velocity_worklog', {});
+                const editor = document.getElementById('workDailyEditor')?.value || 'Awais';
+                const month = document.getElementById('workDailyMonth')?.value || 'May';
+                const workDays = parseInt(document.getElementById('workDailyDays')?.value) || 22;
+                if (!workLogData[editor]) workLogData[editor] = {};
+                if (!workLogData[editor][month]) workLogData[editor][month] = { workingDays: workDays, days: [] };
+                for (let d = 0; d < 31; d++) {
+                    if (!workLogData[editor][month].days[d]) workLogData[editor][month].days[d] = { rawCuts: { count: 0,
+                            hours: 0 }, caption: { count: 0, hours: 0 }, editing: { count: 0, hours: 0 }, extra: { count: 0,
+                            hours: 0 }, extra2: { count: 0, hours: 0 } };
+                }
+                workLogData[editor][month].workingDays = workDays;
+                setLocal('velocity_worklog', workLogData);
+                populateWorkMonthDropdown(editor, month);
+                const sessions = ['rawCuts', 'caption', 'editing', 'extra', 'extra2'];
+                const sessionLabels = ['Raw Cuts', 'Caption', 'Editing', 'Extra', 'Extra 2'];
+                let html = '<table><thead><tr><th>Day</th>';
+                sessions.forEach(s => html +=
+                    `<th colspan="2">${sessionLabels[sessions.indexOf(s)]}</th>`);
+                html += '<th colspan="2">Day Total</th></tr><tr><th></th>';
+                sessions.forEach(() => html += '<th>Count</th><th>Hours</th>');
+                html += '<th>Count</th><th>Hours</th></tr></thead><tbody>';
+                for (let d = 0; d < 31; d++) {
+                    const day = workLogData[editor][month].days[d];
+                    let dtCount = 0,
+                        dtHours = 0;
+                    sessions.forEach(s => { dtCount += day[s]?.count || 0;
+                        dtHours += day[s]?.hours || 0; });
+                    html +=
+                        `<tr><td><strong>${d+1}</strong></td>${sessions.map(s=>`<td><input type="number" value="${day[s]?.count||0}" data-editor="${editor}" data-month="${month}" data-day="${d}" data-session="${s}" data-field="count" style="width:50px;background:#0f172a;color:#fff;border:1px solid #334155;padding:3px;text-align:center;"></td><td><input type="number" value="${day[s]?.hours||0}" data-editor="${editor}" data-month="${month}" data-day="${d}" data-session="${s}" data-field="hours" style="width:50px;background:#0f172a;color:#fff;border:1px solid #334155;padding:3px;text-align:center;"></td>`).join('')}<td style="font-weight:700;color:#34d399;">${dtCount}</td><td style="font-weight:700;color:#34d399;">${dtHours}</td></tr>`;
+                }
+                html += '</tbody></table>';
+                document.getElementById('dailyWorkTableWrap').innerHTML = html;
+                attachWorkLogListeners();
+            }
+
+            function attachWorkLogListeners() {
+                document.querySelectorAll('#dailyWorkTableWrap input').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        const editor = this.dataset.editor;
+                        const month = this.dataset.month;
+                        const day = parseInt(this.dataset.day);
+                        const session = this.dataset.session;
+                        const field = this.dataset.field;
+                        const val = parseInt(this.value) || 0;
+                        if (!workLogData[editor]) workLogData[editor] = {};
+                        if (!workLogData[editor][month]) workLogData[editor][month] = { workingDays: 22,
+                            days: [] };
+                        if (!workLogData[editor][month].days[day]) workLogData[editor][month].days[day] = {};
+                        if (!workLogData[editor][month].days[day][session]) workLogData[editor][month].days[
+                            day][session] = { count: 0, hours: 0 };
+                        workLogData[editor][month].days[day][session][field] = val;
+                        setLocal('velocity_worklog', workLogData);
+                        renderDailyWork();
+                    });
+                });
+            }
+
+            function populateWorkMonthDropdown(editor, currentMonth) {
+                const sel = document.getElementById('workDailyMonth');
+                if (!sel) return;
+                const months = workLogData[editor] ? Object.keys(workLogData[editor]) : ['May'];
+                if (!months.includes('May')) months.unshift('May');
+                sel.innerHTML = months.map(m => `<option ${m===currentMonth?'selected':''}>${m}</option>`).join('');
+            }
+
+            function addWorkMonth() {
+                const editor = document.getElementById('workDailyEditor')?.value || 'Awais';
+                const newMonth = prompt('Enter new month name (e.g., June):');
+                if (!newMonth) return;
+                if (!workLogData[editor]) workLogData[editor] = {};
+                workLogData[editor][newMonth] = { workingDays: 22, days: [] };
+                for (let d = 0; d < 31; d++) workLogData[editor][newMonth].days[d] = { rawCuts: { count: 0, hours: 0 },
+                    caption: { count: 0, hours: 0 }, editing: { count: 0, hours: 0 }, extra: { count: 0, hours: 0 },
+                    extra2: { count: 0, hours: 0 } };
+                setLocal('velocity_worklog', workLogData);
+                document.getElementById('workDailyMonth').value = newMonth;
+                renderDailyWork();
+                showToast('✅ Month added!');
+            }
+
+            // ══════════════════════════════════
+            //  SESSION MANAGER
+            // ══════════════════════════════════
+            function renderSessionRates() {
+                sessionRates = getLocal('velocity_session_rates', DEFAULT_RATES);
+                let html = '<table><thead><tr><th>Session</th>';
+                EDITORS.forEach(e => html +=
+                    `<th class="editor-header">${e}</th>`);
+                html += '</tr></thead><tbody>';
+                SESSIONS.forEach(session => {
+                    html += `<tr><td><strong>${session}</strong></td>`;
+                    EDITORS.forEach(editor => {
+                        const rate = sessionRates[editor]?.[session] || 0;
+                        html +=
+                            `<td><input type="number" value="${rate}" data-editor="${editor}" data-session="${session}" class="rate-input" style="width:70px;background:#0f172a;color:#fff;border:1px solid #334155;padding:5px;text-align:center;border-radius:4px;"></td>`;
+                    });
+                    html += '</tr>';
+                });
+                html +=
+                    '</tbody></table><p class="text-muted" style="margin-top:8px;">💡 Changes save automatically. These rates apply to all months.</p>';
+                document.getElementById('sessionContent').innerHTML = html;
+                document.querySelectorAll('.rate-input').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        const editor = this.dataset.editor;
+                        const session = this.dataset.session;
+                        if (!sessionRates[editor]) sessionRates[editor] = {};
+                        sessionRates[editor][session] = parseInt(this.value) || 0;
+                        setLocal('velocity_session_rates', sessionRates);
+                        showToast('✅ Rate updated');
+                    });
+                });
+            }
+
+            function renderSessionMonthly() {
+                sessionRates = getLocal('velocity_session_rates', DEFAULT_RATES);
+                sessionMonthlyData = getLocal('velocity_session_monthly', {});
+                const month = 'May';
+                if (!sessionMonthlyData[month]) {
+                    sessionMonthlyData[month] = {};
+                    EDITORS.forEach(e => { sessionMonthlyData[month][e] = {};
+                        SESSIONS.forEach(s => sessionMonthlyData[month][e][s] = 0); });
+                }
+                let html = '<table><thead><tr><th>Session</th>';
+                EDITORS.forEach(e => html += `<th colspan="3">${e}</th>`);
+                html += '<th>Row Total</th></tr><tr><th></th>';
+                EDITORS.forEach(() => html += '<th>Rate</th><th>Qty</th><th>Amt</th>');
+                html += '<th>PKR</th></tr></thead><tbody>';
+                SESSIONS.forEach(session => {
+                    let rowTotal = 0;
+                    html += `<tr><td><strong>${session}</strong></td>`;
+                    EDITORS.forEach(editor => {
+                        const rate = sessionRates[editor]?.[session] || 0;
+                        const qty = sessionMonthlyData[month]?.[editor]?.[session] || 0;
+                        const amt = qty * rate;
+                        rowTotal += amt;
+                        html +=
+                            `<td>${rate}</td><td><input type="number" value="${qty}" data-month="${month}" data-editor="${editor}" data-session="${session}" class="sqty-input" style="width:55px;background:#0f172a;color:#fff;border:1px solid #334155;padding:4px;text-align:center;border-radius:4px;"></td><td class="amount-cell">${formatPKRCompact(amt)}</td>`;
+                    });
+                    html += `<td class="amount-cell" style="font-weight:700;">${formatPKRCompact(rowTotal)}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                document.getElementById('sessionContent').innerHTML = html;
+                document.querySelectorAll('.sqty-input').forEach(inp => {
+                    inp.addEventListener('change', function() {
+                        const month = this.dataset.month;
+                        const editor = this.dataset.editor;
+                        const session = this.dataset.session;
+                        if (!sessionMonthlyData[month]) sessionMonthlyData[month] = {};
+                        if (!sessionMonthlyData[month][editor]) sessionMonthlyData[month][editor] = {};
+                        sessionMonthlyData[month][editor][session] = parseInt(this.value) || 0;
+                        setLocal('velocity_session_monthly', sessionMonthlyData);
+                        renderSessionMonthly();
+                    });
+                });
+            }
+
+            function renderSessionSummary() {
+                sessionRates = getLocal('velocity_session_rates', DEFAULT_RATES);
+                sessionMonthlyData = getLocal('velocity_session_monthly', {});
+                let html =
+                    '<p class="text-muted">📋 Summary of all session data across months.</p>';
+                html += '<table><thead><tr><th>Session</th>';
+                EDITORS.forEach(e => html += `<th colspan="2">${e}</th>`);
+                html += '<th>Total</th></tr></thead><tbody>';
+                SESSIONS.forEach(session => {
+                    let rowTotal = 0;
+                    html += `<tr><td><strong>${session}</strong></td>`;
+                    EDITORS.forEach(editor => {
+                        let qty = 0;
+                        Object.values(sessionMonthlyData).forEach(md => { qty += md[editor]?.[
+                                session
+                            ] || 0; });
+                        const amt = qty * (sessionRates[editor]?.[session] || 0);
+                        rowTotal += amt;
+                        html +=
+                            `<td>Qty: ${qty}</td><td class="amount-cell">${formatPKRCompact(amt)}</td>`;
+                    });
+                    html +=
+                        `<td class="amount-cell" style="font-weight:700;">${formatPKRCompact(rowTotal)}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                document.getElementById('sessionContent').innerHTML = html;
+            }
+
+            // ══════════════════════════════════
+            //  REPORTS
+            // ══════════════════════════════════
+            function renderReports() {
+                loans = getLocal('velocity_loans', []);
+                oneTimeLoans = getLocal('velocity_otl', []);
+                projects = getLocal('velocity_projects', []);
+                employees = getLocal('velocity_employees', []);
+                receivablesRows = getLocal('velocity_receivables', []);
+                const totalPendingLoans = loans.filter(l => l.status === 'Pending').reduce((s, l) => s + (Number(l.amount) ||
+                    0), 0);
+                const totalOTLPending = oneTimeLoans.reduce((s, l) => s + Math.max(0, (Number(l.amountGiven) || 0) - (Number(
+                    l.amountRecovered) || 0)), 0);
+                const totalRecPending = receivablesRows.reduce((s, r) => {
+                    let td = 0,
+                        tr = 0;
+                    RECEIVABLE_MONTHS.forEach(m => { td += Number(r.months?.[m]?.total) || 0;
+                        tr += Number(r.months?.[m]?.received) || 0; });
+                    return s + td - tr;
+                }, 0);
+                document.getElementById('reportSummary').innerHTML = `
+                    <table style="min-width:600px;"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>
+                        <tr><td>Total Loan Transactions</td><td>${loans.length}</td></tr>
+                        <tr><td>Pending Loan Amount</td><td>${formatPKR(totalPendingLoans)}</td></tr>
+                        <tr><td>Total One-Time Loans</td><td>${oneTimeLoans.length}</td></tr>
+                        <tr><td>Pending One-Time Loan Amount</td><td>${formatPKR(totalOTLPending)}</td></tr>
+                        <tr><td>Total Projects</td><td>${projects.length}</td></tr>
+                        <tr><td>Pending Receivables</td><td>${formatPKR(totalRecPending)}</td></tr>
+                        <tr><td>Total Employees</td><td>${employees.length}</td></tr>
+                        <tr><td>Receivable Persons</td><td>${receivablesRows.length}</td></tr>
+                    </tbody></table>
+                `;
+            }
+
+            // ══════════════════════════════════
+            //  CSV DOWNLOAD HELPER
+            // ══════════════════════════════════
+            function downloadCSV(filename, csvContent) {
+                const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToast('📥 CSV downloaded!');
+            }
+
+            function exportAllLoansCSV() { exportLoansCSV(); }
+
+            function exportAllProjectsCSV() {
+                projects = getLocal('velocity_projects', []);
+                const csv = ['Project,Month,Client Owner,Work Done By,Junior,Gross,Net Profit,Ashir,Moiz,Notes'].concat(
+                    projects.map(p => {
+                        const g = (Number(p.videosMyWork) || 0) * (Number(p.perVideoRateMyWork) || 0);
+                        const jc = (Number(p.videosJunior) || 0) * (Number(p.perVideoRateJunior) || 0);
+                        const n = g - jc;
+                        const rule = SPLIT_RULES[p.clientOwner]?.[p.workDoneBy];
+                        const ap = rule ? rule / 100 : 0.5;
+                        const ash = Math.round(n * ap);
+                        return [p.projectName, p.month, p.clientOwner, p.workDoneBy, p.juniorEditorName, g, n,
+                            ash, n - ash, p.notes
+                        ].join(',');
+                    })).join('\n');
+                downloadCSV('projects_export.csv', csv);
+            }
+
+            function exportOneTimeLoansCSV() { exportOTLCSV(); }
+
+            function exportEmployeesCSV() {
+                employees = getLocal('velocity_employees', []);
+                const csv = ['Name,Designation,Phone,Email,Join Date'].concat(employees.map(e => [e.name, e.designation, e
+                    .phone, e.email, e.joinDate
+                ].join(','))).join('\n');
+                downloadCSV('employees_export.csv', csv);
+            }
+
+            function refreshAllData() {
+                loans = getLocal('velocity_loans', []);
+                oneTimeLoans = getLocal('velocity_otl', []);
+                projects = getLocal('velocity_projects', []);
+                employees = getLocal('velocity_employees', []);
+                receivablesRows = getLocal('velocity_receivables', []);
+                workLogData = getLocal('velocity_worklog', {});
+                sessionRates = getLocal('velocity_session_rates', DEFAULT_RATES);
+                sessionMonthlyData = getLocal('velocity_session_monthly', {});
+                loadViewData(currentView);
+                showToast('🔄 All data refreshed!');
+            }
+
+            // ══════════════════════════════════
+            //  EXPOSE TO WINDOW
+            // ══════════════════════════════════
+            window.openEmployeeModal = openEmployeeModal;
+            window.editEmployee = editEmployee;
+            window.deleteEmployee = deleteEmployee;
+            window.saveEmployee = saveEmployee;
+            window.openLoanModal = openLoanModal;
+            window.editLoan = editLoan;
+            window.deleteLoan = deleteLoan;
+            window.saveLoan = saveLoan;
+            window.markLoanComplete = markLoanComplete;
+            window.exportLoansCSV = exportLoansCSV;
+            window.openOTLModal = openOTLModal;
+            window.editOTL = editOTL;
+            window.deleteOTL = deleteOTL;
+            window.saveOTL = saveOTL;
+            window.exportOTLCSV = exportOTLCSV;
+            window.openProjectModal = openProjectModal;
+            window.editProject = editProject;
+            window.deleteProject = deleteProject;
+            window.saveProject = saveProject;
+            window.addReceivableRow = addReceivableRow;
+            window.deleteReceivableRow = deleteReceivableRow;
+            window.addWorkMonth = addWorkMonth;
+            window.renderSessionRates = renderSessionRates;
+            window.renderSessionMonthly = renderSessionMonthly;
+            window.renderSessionSummary = renderSessionSummary;
+            window.closeGenericModal = closeGenericModal;
+            window.refreshAllData = refreshAllData;
+            window.exportAllLoansCSV = exportAllLoansCSV;
+            window.exportAllProjectsCSV = exportAllProjectsCSV;
+            window.exportOneTimeLoansCSV = exportOneTimeLoansCSV;
+            window.exportEmployeesCSV = exportEmployeesCSV;
+
+            // ══════════════════════════════════
+            //  INIT
+            // ══════════════════════════════════
+            function init() {
+                checkConnection();
+                renderDashboard();
+                populateWorkMonthDropdown('Awais', 'May');
+                document.getElementById('workDailyMonth').value = 'May';
+                console.log('🚀 Velocity Hub initialized!');
+                console.log('💡 All data stored in LocalStorage. Ready for MongoDB integration.');
+                console.log('📊 Sections: Dashboard | Employees | Loans | Receivables | One-Time Loans | Projects | Work Log | Session Manager | Reports');
+            }
+            init();
+        })();
+    </script>
+</body>
+</html>

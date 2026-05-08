@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocity Command Center – Redesigned</title>
+    <style>
+        /* Complete CSS – replicates earlier style plus cards */
+        :root {
+            --bg: #0f172a; --surface: #1e293b; --border: #334155; --text: #e2e8f0; --text-secondary: #cbd5e1;
+            --primary: #6366f1; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --radius: 10px; --shadow: 0 4px 16px rgba(0,0,0,0.3); --transition: 0.2s;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        /* Sidebar */
+        .sidebar { width: 250px; background: #0b1120; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; overflow-y:auto; }
+        .sidebar-logo { padding:20px; display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem; }
+        .sidebar-logo .icon { width:36px; height:36px; background: linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .sidebar-nav { flex:1; padding:10px 0; }
+        .sidebar-nav .section-title { padding:10px 16px 4px; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); }
+        .sidebar-nav button { display:flex; align-items:center; gap:10px; width: calc(100% - 20px); margin:2px 10px; padding:10px 12px; border-radius:8px; border:none; background:transparent; color:var(--text-secondary); cursor:pointer; font-size:0.85rem; font-weight:500; transition:var(--transition); text-align:left; font-family:inherit; }
+        .sidebar-nav button:hover { background:#1e293b; color:#fff; }
+        .sidebar-nav button.active { background: var(--primary-light, #312e81); color:#c7d2fe; font-weight:600; }
+        /* Main content */
+        .main { margin-left:250px; flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+        .topbar { height:56px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 20px; gap:15px; }
+        .topbar .page-title { font-weight:700; font-size:1.1rem; }
+        .content-area { flex:1; overflow-y:auto; padding:20px; display:none; }
+        .content-area.active { display:block; }
+        .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:15px; }
+        .card-header { padding:12px 18px; border-bottom:1px solid var(--border); font-weight:700; font-size:0.9rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+        .card-body { padding:15px 18px; }
+        .summary-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:12px; }
+        .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); transition:var(--transition); }
+        .stat-card:hover { border-color:#6366f1; }
+        .stat-card .stat-icon { font-size:1.5rem; margin-bottom:4px; }
+        .stat-card .stat-label { font-size:0.7rem; text-transform:uppercase; color:var(--text-secondary); }
+        .stat-card .stat-value { font-size:1.4rem; font-weight:700; color:#fff; }
+        .employee-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+        .employee-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; display:flex; flex-direction:column; align-items:center; gap:8px; box-shadow:var(--shadow); transition:0.2s; }
+        .employee-card:hover { border-color:#6366f1; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .employee-avatar { width:70px; height:70px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:#fff; }
+        .employee-name { font-weight:700; font-size:1rem; }
+        .employee-designation { color:var(--text-secondary); font-size:0.8rem; }
+        .employee-status-badge { padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; }
+        .status-active { background:#064e3b; color:#34d399; }
+        .status-inactive { background:#475569; color:#cbd5e1; }
+        .status-onleave { background:#78350f; color:#fbbf24; }
+        .status-resigned { background:#7f1d1d; color:#fca5a5; }
+        .status-sick { background:#4c1d95; color:#c4b5fd; }
+        .tabs { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:15px; }
+        .tab-btn { padding:8px 16px; border-radius:20px; background:var(--surface); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; font-weight:500; font-size:0.8rem; transition:0.2s; }
+        .tab-btn:hover { border-color:#6366f1; color:#fff; }
+        .tab-btn.active { background:#6366f1; color:#fff; border-color:#6366f1; }
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; font-weight:600; font-size:0.8rem; cursor:pointer; border:1px solid transparent; transition:0.2s; font-family:inherit; white-space:nowrap; }
+        .btn-primary { background:var(--primary); color:#fff; }
+        .btn-primary:hover { background:#4f46e5; }
+        .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+        .btn-outline:hover { border-color:#6366f1; }
+        .btn-sm { padding:4px 10px; font-size:0.75rem; }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:none; align-items:center; justify-content:center; }
+        .modal-overlay.active { display:flex; }
+        .modal { background:var(--surface); border:1px solid var(--border); border-radius:12px; width:100%; max-width:600px; max-height:85vh; overflow-y:auto; box-shadow:0 20px 40px rgba(0,0,0,0.5); animation: slideUp 0.25s; }
+        @keyframes slideUp { from { transform:translateY(30px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+        .modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+        .modal-close { background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; }
+        .modal-body { padding:20px; }
+        .modal-footer { padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+        .form-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+        .form-group { margin-bottom:12px; }
+        .form-group label { display:block; font-weight:600; font-size:0.75rem; color:var(--text-secondary); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.03em; }
+        .form-group input, .form-group select, .form-group textarea { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:6px; background:#0f172a; color:var(--text); font-family:inherit; font-size:0.85rem; }
+        .form-group input:focus, .form-group select:focus { border-color:#6366f1; }
+        table { width:100%; border-collapse: collapse; font-size:0.8rem; min-width: 800px; }
+        thead th { background:#1a2332; color:var(--text-secondary); padding:10px 8px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); white-space:nowrap; }
+        tbody td { padding:8px; border-bottom:1px solid #1e293b; }
+        .toast { position:fixed; bottom:20px; right:20px; background:#1e293b; color:#fff; padding:12px 18px; border-radius:8px; z-index:300; font-weight:500; border:1px solid var(--border); animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+        /* Scrollbar */ ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:#475569;border-radius:3px;}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span class="icon">⚡</span> Velocity Hub</div>
+        <nav class="sidebar-nav">
+            <button data-view="dashboard" class="active"><span>📊</span> Dashboard</button>
+            <button data-view="employees"><span>👥</span> Employees</button>
+            <button data-view="financial"><span>💰</span> Financial Record</button>
+            <button data-view="project-finance"><span>📋</span> Project Finance</button>
+            <button data-view="work"><span>📈</span> Work</button>
+            <button data-view="daily-work"><span>📝</span> Daily Work Log</button>
+            <button data-view="session-manager"><span>⚙️</span> Session Manager</button>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="topbar">
+            <span class="page-title" id="pageTitle">📊 Dashboard</span>
+            <div style="margin-left:auto; display:flex; gap:10px;">
+                <button class="btn btn-outline btn-sm" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="content-area active" id="view-dashboard">
+            <div class="summary-grid" id="dashboardSummary"></div>
+            <div class="card"><div class="card-header">📋 Quick Stats</div><div class="card-body" id="dashboardStats"></div></div>
+        </div>
+
+        <!-- Employees -->
+        <div class="content-area" id="view-employees">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2>All Employees</h2>
+                <button class="btn btn-primary" onclick="openEmployeeModal()">➕ Add Employee</button>
+            </div>
+            <div class="employee-grid" id="employeeCards"></div>
+        </div>
+
+        <!-- Financial Record -->
+        <div class="content-area" id="view-financial">
+            <div class="tabs" id="financialTabs"></div>
+            <div id="financialDetail"></div>
+        </div>
+
+        <!-- Project Finance (placeholders for content) -->
+        <div class="content-area" id="view-project-finance">
+            <div class="card"><div class="card-header">📋 Project Finance Tracker</div><div class="card-body" id="projectFinanceContent">Loading...</div></div>
+        </div>
+        <div class="content-area" id="view-work"><div class="card"><div class="card-header">📈 Work Overview</div><div class="card-body">Coming soon.</div></div></div>
+        <div class="content-area" id="view-daily-work"><div class="card"><div class="card-header">📝 Daily Work Log</div><div class="card-body" id="dailyWorkContent">Loading...</div></div></div>
+        <div class="content-area" id="view-session-manager"><div class="card"><div class="card-header">⚙️ Session Manager</div><div class="card-body" id="sessionManagerContent">Loading...</div></div></div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="genericModalOverlay">
+        <div class="modal">
+            <div class="modal-header"><h3 id="modalTitle">Modal</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+    <div id="toastContainer"></div>
+
+    <script>
+        // ---------- GLOBALS & STATE ----------
+        const API = '/api';
+        let currentView = 'dashboard';
+        let employees = [], loans = [], oneTimeLoans = [], projects = [], receivables = [], workLogs = [], sessionRates = {}, sessionMonthly = [];
+
+        // ---------- HELPERS ----------
+        function formatPKR(amount) { if (amount == null || isNaN(amount)) return '—'; return 'PKR ' + Math.round(Number(amount)).toLocaleString('en-PK'); }
+        function showToast(msg) { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.getElementById('toastContainer').appendChild(t); setTimeout(()=>t.remove(), 2500); }
+        function escapeHTML(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+        // ---------- MODAL ----------
+        function openModal(title, body, footer) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = body;
+            document.getElementById('modalFooter').innerHTML = footer;
+            document.getElementById('genericModalOverlay').classList.add('active');
+        }
+        function closeModal() { document.getElementById('genericModalOverlay').classList.remove('active'); }
+        document.getElementById('genericModalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('genericModalOverlay').classList.contains('active')) closeModal(); });
+
+        // ---------- FETCH WRAPPER ----------
+        async function apiGet(endpoint) { try { const res = await fetch(API + endpoint); if (!res.ok) throw new Error(res.status); return await res.json(); } catch(e) { console.error(e); return []; } }
+        async function apiPost(endpoint, data) { try { const res = await fetch(API + endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }); if (!res.ok) throw new Error(res.status); return await res.json(); } catch(e) { console.error(e); return null; } }
+        async function apiPut(endpoint, data) { try { const res = await fetch(API + endpoint, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }); if (!res.ok) throw new Error(res.status); return await res.json(); } catch(e) { console.error(e); return null; } }
+        async function apiDelete(endpoint) { try { await fetch(API + endpoint, { method:'DELETE' }); } catch(e) { console.error(e); } }
+
+        // ---------- NAVIGATION ----------
+        document.querySelectorAll('.sidebar-nav button[data-view]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const view = this.dataset.view;
+                switchView(view);
+            });
+        });
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
+            const target = document.getElementById('view-' + view);
+            if (target) target.classList.add('active');
+            document.getElementById('pageTitle').textContent = view.replace(/-/g,' ').toUpperCase();
+            loadView(view);
+        }
+        async function loadView(view) {
+            switch(view) {
+                case 'dashboard': loadDashboard(); break;
+                case 'employees': loadEmployees(); break;
+                case 'financial': loadFinancial(); break;
+                case 'project-finance': loadProjectFinance(); break;
+                case 'daily-work': loadDailyWork(); break;
+                case 'session-manager': loadSessionManager(); break;
+                default: break;
+            }
+        }
+
+        // ---------- DATA LOADING ----------
+        async function refreshData() {
+            employees = await apiGet('/employees');
+            loans = await apiGet('/loans');
+            oneTimeLoans = await apiGet('/otl');
+            projects = await apiGet('/projects');
+            receivables = await apiGet('/receivables');
+            workLogs = await apiGet('/worklog');
+            sessionRates = await apiGet('/sessionrates');
+            sessionMonthly = await apiGet('/sessionmonthly');
+            loadView(currentView);
+            showToast('Data refreshed');
+        }
+
+        // ---------- DASHBOARD ----------
+        async function loadDashboard() {
+            if (employees.length===0) await refreshData();
+            document.getElementById('dashboardSummary').innerHTML = `
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Total Employees</div><div class="stat-value">${employees.length}</div></div>
+                <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Pending Loans</div><div class="stat-value">${formatPKR(loans.filter(l=>l.status==='Pending').reduce((s,l)=>s+(l.amount||0),0))}</div></div>
+                <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-label">Projects</div><div class="stat-value">${projects.length}</div></div>
+            `;
+            document.getElementById('dashboardStats').innerHTML = `<p>Active Employees: ${employees.filter(e=>e.status==='Active').length}</p>`;
+        }
+
+        // ---------- EMPLOYEES PAGE (cards) ----------
+        async function loadEmployees() {
+            if (employees.length===0) await refreshData();
+            const grid = document.getElementById('employeeCards');
+            grid.innerHTML = employees.map(e => `
+                <div class="employee-card">
+                    <div class="employee-avatar">${e.name.charAt(0).toUpperCase()}</div>
+                    <div class="employee-name">${escapeHTML(e.name)}</div>
+                    <div class="employee-designation">${escapeHTML(e.designation||'—')}</div>
+                    <div><span class="employee-status-badge status-${e.status.toLowerCase().replace(/ /g,'')}">${e.status}</span></div>
+                    <div style="display:flex; gap:5px; margin-top:5px;">
+                        <button class="btn btn-outline btn-sm" onclick="editEmployee('${e._id}')">✏️</button>
+                        <button class="btn btn-outline btn-sm" style="color:#ef4444;" onclick="deleteEmployee('${e._id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openEmployeeModal(id = null) {
+            const emp = id ? employees.find(e => e._id === id) : {};
+            openModal(id ? 'Edit Employee' : 'Add Employee', `
+                <input type="hidden" id="empId" value="${id||''}">
+                <div class="form-grid"><div class="form-group"><label>Name *</label><input id="empName" value="${escapeHTML(emp.name||'')}"></div>
+                <div class="form-group"><label>Designation</label><input id="empDesignation" value="${escapeHTML(emp.designation||'')}"></div></div>
+                <div class="form-grid"><div class="form-group"><label>Work Type</label><select id="empWorkType"><option ${emp.workType==='Remote'?'selected':''}>Remote</option><option ${emp.workType==='On site'?'selected':''}>On site</option></select></div>
+                <div class="form-group"><label>Phone</label><input id="empPhone" value="${escapeHTML(emp.phone||'')}"></div></div>
+                <div class="form-grid"><div class="form-group"><label>Email</label><input id="empEmail" value="${escapeHTML(emp.email||'')}"></div>
+                <div class="form-group"><label>Join Date</label><input type="date" id="empJoinDate" value="${emp.joinDate||''}"></div></div>
+                <div class="form-group"><label>Status</label><select id="empStatus">
+                    ${['Active','Inactive','On Leave','Resigned','Sick'].map(s => `<option ${emp.status===s?'selected':''}>${s}</option>`).join('')}
+                </select></div>
+                <div class="form-group"><label>Home Address</label><textarea id="empAddress">${escapeHTML(emp.homeAddress||'')}</textarea></div>
+            `, `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEmployee()">Save</button>`);
+        }
+        async function saveEmployee() {
+            const id = document.getElementById('empId').value;
+            const data = {
+                name: document.getElementById('empName').value.trim(),
+                designation: document.getElementById('empDesignation').value.trim(),
+                workType: document.getElementById('empWorkType').value,
+                phone: document.getElementById('empPhone').value.trim(),
+                email: document.getElementById('empEmail').value.trim(),
+                joinDate: document.getElementById('empJoinDate').value,
+                status: document.getElementById('empStatus').value,
+                homeAddress: document.getElementById('empAddress').value.trim()
+            };
+            if (!data.name) { showToast('Name required'); return; }
+            if (id) await apiPut(`/employees/${id}`, data);
+            else await apiPost('/employees', data);
+            closeModal();
+            await refreshData();
+            loadEmployees();
+            showToast('Employee saved');
+        }
+        async function editEmployee(id) { openEmployeeModal(id); }
+        async function deleteEmployee(id) {
+            if (confirm('Delete this employee?')) { await apiDelete(`/employees/${id}`); await refreshData(); loadEmployees(); showToast('Employee deleted'); }
+        }
+        window.openEmployeeModal = openEmployeeModal;
+        window.editEmployee = editEmployee;
+        window.deleteEmployee = deleteEmployee;
+        window.saveEmployee = saveEmployee;
+
+        // ---------- FINANCIAL RECORD (per employee tabs) ----------
+        async function loadFinancial() {
+            if (employees.length===0) await refreshData();
+            const tabsDiv = document.getElementById('financialTabs');
+            tabsDiv.innerHTML = employees.map((e,i) => `<button class="tab-btn ${i===0?'active':''}" onclick="selectFinancialTab('${e._id}')">${escapeHTML(e.name)}</button>`).join('');
+            if (employees.length>0) selectFinancialTab(employees[0]._id);
+        }
+        function selectFinancialTab(empId) {
+            document.querySelectorAll('#financialTabs .tab-btn').forEach(b => b.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const emp = employees.find(e => e._id === empId);
+            if (!emp) return;
+            const empLoans = loans.filter(l => l.name === emp.name);
+            const empOTL = oneTimeLoans.filter(l => l.teamMember === emp.name);
+            const empProjects = projects.filter(p => p.clientOwner === emp.name || p.workDoneBy === emp.name);
+            const totalEarnings = empProjects.reduce((sum, p) => {
+                const gross = (p.videosMyWork||0)*(p.perVideoRateMyWork||0);
+                const jrCost = (p.videosJunior||0)*(p.perVideoRateJunior||0);
+                return sum + gross - jrCost;
+            }, 0);
+            const html = `
+                <div class="card"><div class="card-header">${escapeHTML(emp.name)} – Financial Summary</div><div class="card-body">
+                    <p><strong>Total Projects:</strong> ${empProjects.length} | <strong>Total Earnings:</strong> ${formatPKR(totalEarnings)}</p>
+                    <h4>Loans (${empLoans.length})</h4>
+                    <table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+                        ${empLoans.map(l => `<tr><td>${l.date||'—'}</td><td>${l.type}</td><td>${formatPKR(l.amount)}</td><td>${l.status}</td></tr>`).join('')}
+                    </tbody></table>
+                    <h4 style="margin-top:15px;">One-Time Loans (${empOTL.length})</h4>
+                    <table><thead><tr><th>Date Given</th><th>Amount</th><th>Recovered</th><th>Status</th></tr></thead><tbody>
+                        ${empOTL.map(l => `<tr><td>${l.dateGiven||'—'}</td><td>${formatPKR(l.amountGiven)}</td><td>${formatPKR(l.amountRecovered)}</td><td>${(l.amountGiven-l.amountRecovered)<=0?'Paid':'Pending'}</td></tr>`).join('')}
+                    </tbody></table>
+                </div></div>`;
+            document.getElementById('financialDetail').innerHTML = html;
+        }
+        window.selectFinancialTab = selectFinancialTab;
+
+        // ---------- PROJECT FINANCE (original) ----------
+        async function loadProjectFinance() {
+            if (projects.length===0) await refreshData();
+            const content = document.getElementById('projectFinanceContent');
+            content.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openProjectModal()">+ Add Project</button>
+            <div style="margin-top:15px;"><table><thead><tr><th>Project</th><th>Month</th><th>Client Owner</th><th>Work Done By</th><th>Gross</th><th>Net Profit</th></tr></thead><tbody>
+                ${projects.map(p => {
+                    const gross = (p.videosMyWork||0)*(p.perVideoRateMyWork||0);
+                    const net = gross - ((p.videosJunior||0)*(p.perVideoRateJunior||0));
+                    return `<tr><td>${p.projectName}</td><td>${p.month}</td><td>${p.clientOwner}</td><td>${p.workDoneBy}</td><td>${formatPKR(gross)}</td><td>${formatPKR(net)}</td></tr>`;
+                }).join('')}
+            </tbody></table></div>`;
+        }
+        function openProjectModal() {
+            openModal('Add Project', `
+                <div class="form-group"><label>Project Name</label><input id="projName"></div>
+                <div class="form-group"><label>Month</label><input id="projMonth"></div>
+                <div class="form-group"><label>Client Owner</label><input id="projOwner"></div>
+                <div class="form-group"><label>Work Done By</label><input id="projWork"></div>
+                <button class="btn btn-primary" onclick="saveProject()">Save</button>
+            `, '');
+        }
+        async function saveProject() {
+            const data = {
+                projectName: document.getElementById('projName').value,
+                month: document.getElementById('projMonth').value,
+                clientOwner: document.getElementById('projOwner').value,
+                workDoneBy: document.getElementById('projWork').value
+            };
+            await apiPost('/projects', data);
+            closeModal();
+            await refreshData();
+            loadProjectFinance();
+        }
+        window.openProjectModal = openProjectModal;
+        window.saveProject = saveProject;
+
+        // ---------- DAILY WORK LOG ----------
+        async function loadDailyWork() {
+            const content = document.getElementById('dailyWorkContent');
+            content.innerHTML = `<p>Daily work log will be shown here (similar to original).</p>`;
+        }
+
+        // ---------- SESSION MANAGER ----------
+        async function loadSessionManager() {
+            const content = document.getElementById('sessionManagerContent');
+            content.innerHTML = `<p>Session manager will be shown here (similar to original).</p>`;
+        }
+
+        // ---------- INIT ----------
+        (async function init() {
+            await refreshData();
+            switchView('dashboard');
+        })();
+    </script>
+</body>
+</html>
